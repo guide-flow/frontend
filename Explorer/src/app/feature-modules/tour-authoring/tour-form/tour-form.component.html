@@ -1,0 +1,75 @@
+<form [formGroup]="tourForm" class="tour-form">
+  <h2 class="form-title">{{ shouldEdit ? "Update Tour" : "Create Tour" }}</h2>
+
+  <mat-form-field appearance="fill" class="w-100">
+    <mat-label>Title</mat-label>
+    <input matInput formControlName="title" />
+    <mat-error *ngIf="tourForm.get('title')?.hasError('required')">
+      Title je obavezan.
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="w-100">
+    <mat-label>Description</mat-label>
+    <textarea
+      matInput
+      cdkTextareaAutosize
+      cdkAutosizeMinRows="1"
+      cdkAutosizeMaxRows="5"
+      formControlName="description"
+    ></textarea>
+    <mat-error *ngIf="tourForm.get('description')?.hasError('required')">
+      Description je obavezan.
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="w-100">
+    <mat-label>Difficulty</mat-label>
+    <mat-select formControlName="difficulty">
+      <mat-option *ngFor="let d of difficulties" [value]="d.value">
+        {{ d.label }}
+      </mat-option>
+    </mat-select>
+    <mat-error *ngIf="tourForm.get('difficulty')?.hasError('required')">
+      Difficulty je obavezan.
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="w-100">
+    <mat-label>Tags (comma-separated)</mat-label>
+    <input
+      matInput
+      formControlName="tagsText"
+      placeholder="city, museum, nature"
+    />
+    <mat-hint>Primer: history, kids, food</mat-hint>
+  </mat-form-field>
+
+  <div *ngIf="previewTags.length" class="tags-preview">
+    <span *ngFor="let t of previewTags" class="tag-chip">{{ t }}</span>
+  </div>
+
+  <div class="button-row">
+    <button
+      *ngIf="!shouldEdit"
+      mat-raised-button
+      color="primary"
+      type="button"
+      (click)="createTour()"
+      [disabled]="tourForm.invalid"
+    >
+      Create
+    </button>
+
+    <button
+      *ngIf="shouldEdit"
+      mat-raised-button
+      color="primary"
+      type="button"
+      (click)="updateTour()"
+      [disabled]="tourForm.invalid"
+    >
+      Update
+    </button>
+  </div>
+</form>
