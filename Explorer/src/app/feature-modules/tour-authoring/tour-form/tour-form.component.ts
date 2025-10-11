@@ -11,6 +11,8 @@ import { CreateUpdateTour } from '../model/tour/create-update-tour';
 import { TourDifficulty } from '../model/tour/tour-difficulty';
 import { TourTag } from '../model/tour/tour-tag';
 import { TourAuthoringService } from '../tour-authoring.service';
+import { Router } from '@angular/router';
+import { Tour } from '../model/tour/tour';
 
 type TourFormValue = {
   title: string;
@@ -55,7 +57,10 @@ export class TourFormComponent implements OnChanges {
     return this.parseTags(this.tourForm.controls.tagsText.value || '');
   }
 
-  constructor(private tourService: TourAuthoringService) {}
+  constructor(
+    private tourService: TourAuthoringService,
+    private router: Router
+  ) {}
 
   ngOnChanges(_: SimpleChanges): void {
     this.tourForm.reset({
@@ -107,8 +112,15 @@ export class TourFormComponent implements OnChanges {
   createTour(): void {
     if (this.tourForm.invalid) return;
     const payload = this.buildPayload();
+
     this.tourService.createTour(payload).subscribe({
-      next: () => this.tourSaved.emit(),
+      next: (created: Tour) => {
+        const tourId = created?.id;
+        if (tourId) {
+          this.router.navigate(['/tour-details', tourId]);
+        }
+        this.tourSaved.emit();
+      },
     });
   }
 

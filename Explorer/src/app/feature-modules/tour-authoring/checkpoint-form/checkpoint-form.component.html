@@ -1,0 +1,50 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="form-vert">
+    <mat-form-field appearance="outline">
+      <mat-label>Naslov</mat-label>
+      <input matInput formControlName="title" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Opis</mat-label>
+      <textarea matInput rows="3" formControlName="description"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Longitude</mat-label>
+      <input type="number" matInput formControlName="longitude" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Latitude</mat-label>
+      <input type="number" matInput formControlName="latitude" />
+    </mat-form-field>
+
+    <!-- Mapa zauzima ceo red; visinu rešavamo u CSS-u -->
+    <xp-map
+      class="map-block"
+      (coordinatesSelected)="onMapSelect($event)"
+      [viewOnly]="false"
+    >
+    </xp-map>
+
+    <div class="file-block">
+      <label for="file">Slika (base64, opcionalno):</label>
+      <input id="file" type="file" (change)="onFileSelected($event)" />
+      <div *ngIf="previewBase64" class="preview">
+        <img [src]="previewBase64" alt="preview" />
+      </div>
+    </div>
+
+    <div class="actions">
+      <button
+        mat-flat-button
+        color="primary"
+        type="submit"
+        [disabled]="form.invalid"
+      >
+        {{ shouldEdit ? "Sačuvaj izmene" : "Dodaj Checkpoint" }}
+      </button>
+    </div>
+  </div>
+</form>

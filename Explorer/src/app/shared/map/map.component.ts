@@ -6,6 +6,8 @@ import {
   EventEmitter,
   OnChanges,
   OnDestroy,
+  ViewChild,
+  ElementRef,
 } from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
@@ -16,11 +18,18 @@ import 'leaflet-routing-machine';
   styleUrls: ['./map.component.css'],
 })
 export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
+  @ViewChild('mapEl', { static: false })
+  mapContainer!: ElementRef<HTMLDivElement>;
+
   private map: L.Map | null = null;
   private markers: L.Marker[] = [];
-  private routeControl: any = null; // ostavljeno kao any zbog typings-a za leaflet-routing-machine
+  private routeControl: any = null; // typings za lrm
 
-  @Input() initialMarkers: L.LatLng[] = [];
+  @Input() initialMarkers: L.LatLngExpression[] = [];
+
+  // ✅ NOVO: view-only (default: true) — nema kliktanja/dodavanja
+  @Input() viewOnly: boolean = true;
+
   @Input() checkpoints: {
     latitude: number;
     longitude: number;
@@ -41,7 +50,6 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
   }>();
 
   ngAfterViewInit(): void {
-    // Default marker ikonica (CDN)
     const DefaultIcon = L.icon({
       iconUrl: 'https://unpkg.com/leaflet@1.6.0/dist/images/marker-icon.png',
       iconSize: [25, 41],
@@ -61,14 +69,15 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(): void {
-    if (!this.map) return;
-    // Refresh samo iz checkpoints inputa (pretpostavka da se to menja)
-    this.renderFromCheckpoints();
+    if (this.map) {
+      setTimeout(() => this.map?.invalidateSize(), 300);
+      this.renderFromCheckpoints();
+    }
   }
 
   // --- Init & layers ---
   private initMap(): void {
-    this.map = L.map('map', {
+    this.map = L.map(this.mapContainer.nativeElement, {
       center: [45.2396, 19.8227],
       zoom: 13,
     });
@@ -76,25 +85,26 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
       minZoom: 3,
-      attribution:
-        '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-    }).addTo(this.map);
+      attribution: '&copy; OpenStreetMap',
+    }).addTo(this.map!);
 
-    this.registerOnClick();
+    // ❌ UKLONJENO kliktanje kad je viewOnly (default true)
+    if (!this.viewOnly) {
+      this.registerOnClick();
+    }
 
-    // Početni markeri (ako ih šalješ)
+    // početni markeri (ako ih šalješ)
     this.initialMarkers.forEach((latLng) =>
-      this.addMarker(L.marker(latLng).addTo(this.map!))
+      this.addMarker(L.marker(latLng as L.LatLngExpression).addTo(this.map!))
     );
 
-    // Prikaz checkpoint-a + ruta
+    // render iz checkpoints + ruta
     this.renderFromCheckpoints();
   }
 
-  // --- Click dodaje jedan marker i emituje koordinate ---
+  // --- Click (ostavljeno, ali se NE poziva u viewOnly modu) ---
   private registerOnClick(): void {
     this.map!.on('click', (e: L.LeafletMouseEvent) => {
-      // Zadržavamo logiku sa jednim markerom
       this.clearMarkersOnly();
       const { lat, lng } = e.latlng;
       const marker = L.marker([lat, lng]).addTo(this.map!);
@@ -105,24 +115,24 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   // --- Render checkpoint-a i rute ---
   private renderFromCheckpoints(): void {
-    // Brišemo markere i rutu pa nanosimo checkpoint-e
     this.resetMapInternal();
 
+    // iscrtaj markere iz checkpoint-a (samo prikaz/popup)
     this.checkpoints.forEach((checkpoint) => {
       const latLng = L.latLng(checkpoint.latitude, checkpoint.longitude);
       const popupContent = `
-        <div style="width: 75px; text-align: center; padding: 3px;">
-          <h5 style="margin: 0; font-size: 12px; font-weight: bold;">${
+        <div style="width:140px; text-align:center; padding:3px;">
+          <h5 style="margin:0; font-size:12px; font-weight:bold;">${
             checkpoint.name ?? ''
           }</h5>
           ${
             checkpoint.imageUrl
-              ? `<img src="${checkpoint.imageUrl}" alt="Checkpoint Image" style="width: 100%; height: auto; margin: 3px 0; border-radius: 3px;" />`
+              ? `<img src="${checkpoint.imageUrl}" alt="Checkpoint" style="width:100%; height:auto; margin:3px 0; border-radius:3px;" />`
               : ''
           }
           ${
             checkpoint.description
-              ? `<p style="font-size: 11px; color: #666; margin: 0;">${checkpoint.description}</p>`
+              ? `<p style="font-size:11px; color:#666; margin:0;">${checkpoint.description}</p>`
               : ''
           }
         </div>
@@ -134,7 +144,10 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     if (this.markers.length > 1) {
       const waypoints = this.markers.map((m) => m.getLatLng());
-      this.setRoute(waypoints);
+      this.setRoute(waypoints); // ✅ uvek walking
+    } else if (this.markers.length === 1) {
+      // centriraj na jedini marker
+      this.map!.setView(this.markers[0].getLatLng(), 14);
     }
   }
 
@@ -142,18 +155,24 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
     if (waypoints.length < 2) return;
 
     if (this.routeControl) {
-      if (this.map!.hasLayer(this.routeControl)) {
+      if ((this.routeControl as any)._map) {
         this.map!.removeControl(this.routeControl);
       }
       this.routeControl = null;
     }
 
+    // ✅ ZAKUCANO NA WALKING
     this.routeControl = (L as any).Routing.control({
       waypoints,
       router: (L as any).routing.mapbox(
         'pk.eyJ1IjoicmF0a292YWMiLCJhIjoiY20ybDJmdGNxMDdkMjJrc2dodncycWhhZiJ9.fkyW7QT3iz7fxVS5u5w1bg',
         { profile: 'mapbox/walking' }
       ),
+      addWaypoints: false,
+      draggableWaypoints: false,
+      fitSelectedRoutes: true,
+      show: false,
+      routeWhileDragging: false,
     }).addTo(this.map!);
 
     this.routeControl.on('routesfound', (e: { routes: any[] }) => {
@@ -165,6 +184,7 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
         time: totalTimeMinutes,
         distance: Number(totalDistanceKm.toFixed(2)),
       });
+      this.map?.invalidateSize();
     });
   }
 
@@ -186,7 +206,7 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
   }
 
-  // Javni reset ako ti treba spolja (čuvao sam event)
+  // Javni reset
   resetMap(): void {
     this.resetMapInternal();
     this.mapReset.emit();

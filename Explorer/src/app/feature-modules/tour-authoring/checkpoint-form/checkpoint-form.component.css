@@ -1,0 +1,35 @@
+.form-vert {
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* razmak između elemenata */
+  width: 100%;
+}
+
+mat-form-field {
+  width: 100%; /* Material polja preko cele širine */
+}
+
+.map-block {
+  display: block;
+  width: 100%;
+}
+
+/* ako tvoj xp-map već ima fiksnu visinu unutra (.map-frame), ovo je dovoljno.
+   Ako treba spolja da forsiraš visinu, dodaj custom CSS varijantu u xp-map ili: */
+.map-block ::ng-deep .map-frame {
+  height: 320px; /* visina prikaza mape */
+}
+
+/* fajl upload i preview */
+.file-block .preview {
+  margin-top: 8px;
+}
+.file-block .preview img {
+  max-width: 180px;
+  border: 1px solid #ddd;
+}
+
+/* dugme dole */
+.actions {
+  margin-top: 12px;
+}

@@ -6,6 +6,7 @@ import { EquipmentComponent } from 'src/app/feature-modules/administration/equip
 import { AuthGuard } from '../auth/auth.guard';
 import { RegistrationComponent } from '../auth/registration/registration.component';
 import { ToursComponent } from 'src/app/feature-modules/tour-authoring/tours/tours.component';
+import { TourDetailsComponent } from 'src/app/feature-modules/tour-authoring/tour-details/tour-details.component';
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
@@ -17,6 +18,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
   },
   { path: 'tours', component: ToursComponent },
+  { path: 'tour-details/:tourId', component: TourDetailsComponent },
 ];
 
 @NgModule({

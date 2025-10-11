@@ -1,0 +1,137 @@
+<section class="checkpoints">
+  <mat-card class="list">
+    <mat-card-header>
+      <mat-card-title>Checkpoints</mat-card-title>
+      <mat-card-subtitle>Pregled i akcije</mat-card-subtitle>
+      <span class="spacer"></span>
+      <button mat-flat-button color="primary" (click)="onAddClicked()">
+        <mat-icon>add</mat-icon>&nbsp;Dodaj
+      </button>
+    </mat-card-header>
+
+    <mat-card-content>
+      <table
+        mat-table
+        [dataSource]="checkpoints"
+        class="mat-elevation-z1"
+        multiTemplateDataRows
+      >
+        <!-- Naslov -->
+        <ng-container matColumnDef="title">
+          <th mat-header-cell *matHeaderCellDef>Naslov</th>
+          <td mat-cell *matCellDef="let cp">
+            <div class="cell-strong">{{ cp.title }}</div>
+          </td>
+        </ng-container>
+
+        <!-- Opis -->
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef>Opis</th>
+          <td mat-cell *matCellDef="let cp">
+            <div class="cell-wrap">{{ cp.description }}</div>
+          </td>
+        </ng-container>
+
+        <!-- Longitude -->
+        <ng-container matColumnDef="longitude">
+          <th mat-header-cell *matHeaderCellDef>Longitude</th>
+          <td mat-cell *matCellDef="let cp">{{ cp.longitude }}</td>
+        </ng-container>
+
+        <!-- Latitude -->
+        <ng-container matColumnDef="latitude">
+          <th mat-header-cell *matHeaderCellDef>Latitude</th>
+          <td mat-cell *matCellDef="let cp">{{ cp.latitude }}</td>
+        </ng-container>
+
+        <!-- Tour -->
+        <ng-container matColumnDef="tourId">
+          <th mat-header-cell *matHeaderCellDef>Tour</th>
+          <td mat-cell *matCellDef="let cp">{{ cp.tourId }}</td>
+        </ng-container>
+
+        <!-- Akcije -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let cp" class="actions-cell">
+            <button
+              mat-icon-button
+              color="primary"
+              (click)="onEditClicked(cp)"
+              aria-label="Izmeni"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              color="warn"
+              (click)="deleteCheckpoint(cp.id || 0)"
+              aria-label="Obriši"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <!-- Header i redovi -->
+        <tr
+          mat-header-row
+          *matHeaderRowDef="displayedColumns; sticky: true"
+        ></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns; trackBy: trackById"
+        ></tr>
+
+        <!-- Prazno stanje -->
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell no-data" [attr.colspan]="displayedColumns.length">
+            Nema checkpoint-ova. Klikni dodaj da dodaš prvi.
+          </td>
+        </tr>
+      </table>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="form">
+    <mat-card-header>
+      <mat-card-title>{{
+        shouldEdit ? "Izmeni checkpoint" : "Novi checkpoint"
+      }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <xp-checkpoint-form
+        *ngIf="shouldRenderCheckpointForm"
+        [shouldEdit]="shouldEdit"
+        [checkpoint]="selectedCheckpoint"
+        [tourId]="tourId"
+        (checkpointUpdated)="getCheckpoints()"
+      >
+      </xp-checkpoint-form>
+
+      <div *ngIf="!shouldRenderCheckpointForm" class="placeholder">
+        Izaberi “Dodaj” ili klikni ✏️ u tabeli da bi otvorio formu.
+      </div>
+      <!-- primer: dodaj ispod karte forme ili na novu kolonu po želji -->
+      <xp-map
+        class="map-block"
+        *ngIf="!shouldRenderCheckpointForm"
+        [checkpoints]="mapCheckpoints"
+        [viewOnly]="true"
+        (distanceCalculated)="onDistanceCalculated($event)"
+      >
+      </xp-map>
+      <div class="actions-row" *ngIf="!shouldRenderCheckpointForm">
+        <span class="spacer"></span>
+        <button
+          mat-flat-button
+          color="primary"
+          (click)="finish()"
+          [disabled]="!tourMetrics || !tourMetrics.lengthInKm"
+        >
+          <mat-icon>flag</mat-icon>&nbsp;Finish
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</section>

@@ -1,0 +1,80 @@
+.checkpoints {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr;
+}
+
+mat-card {
+  overflow: hidden;
+}
+
+mat-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .spacer {
+    flex: 1;
+  }
+}
+
+table {
+  width: 100%;
+  border-spacing: 0;
+}
+
+th.mat-header-cell,
+td.mat-cell {
+  padding: 8px 12px;
+  vertical-align: top;
+}
+
+.cell-strong {
+  font-weight: 600;
+}
+
+.cell-wrap {
+  white-space: normal;
+  word-break: break-word;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.actions-cell {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+  white-space: nowrap;
+}
+
+.no-data {
+  text-align: center;
+  padding: 16px;
+}
+
+.list {
+  min-width: 0; /* sprečava overflow u gridu */
+}
+
+.form {
+  min-width: 0;
+}
+
+.placeholder {
+  color: rgba(0, 0, 0, 0.6);
+  font-style: italic;
+  padding: 12px 0;
+}
+
+.map-block {
+  display: block;
+  width: 100%;
+}
+
+.actions-row {
+  display: flex;
+  align-items: center;
+  margin-top: 12px;
+}
+.actions-row .spacer {
+  flex: 1;
+}

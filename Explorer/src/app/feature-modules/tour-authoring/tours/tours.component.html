@@ -1,3 +1,166 @@
-<div>
-  <xp-tour-form [shouldEdit]="false" (tourSaved)="getTours()"></xp-tour-form>
-</div>
+<section class="tours">
+  <mat-card class="list">
+    <mat-card-header>
+      <mat-card-title>Tours</mat-card-title>
+      <mat-card-subtitle>Pregled i akcije</mat-card-subtitle>
+      <span class="spacer"></span>
+      <button mat-flat-button color="primary" (click)="onAddClicked()">
+        <mat-icon>add</mat-icon>&nbsp;Dodaj
+      </button>
+    </mat-card-header>
+
+    <mat-card-content>
+      <table
+        mat-table
+        [dataSource]="tours"
+        class="mat-elevation-z1"
+        multiTemplateDataRows
+      >
+        <!-- Title -->
+        <ng-container matColumnDef="title">
+          <th mat-header-cell *matHeaderCellDef>Naslov</th>
+          <td mat-cell *matCellDef="let t">
+            <div class="cell-strong">{{ t.title }}</div>
+          </td>
+        </ng-container>
+
+        <!-- Description -->
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef>Opis</th>
+          <td mat-cell *matCellDef="let t">
+            <div class="cell-wrap">{{ t.description }}</div>
+          </td>
+        </ng-container>
+
+        <!-- Difficulty -->
+        <ng-container matColumnDef="difficulty">
+          <th mat-header-cell *matHeaderCellDef>Težina</th>
+          <td mat-cell *matCellDef="let t">{{ t.difficulty }}</td>
+        </ng-container>
+
+        <!-- Price -->
+        <ng-container matColumnDef="price">
+          <th mat-header-cell *matHeaderCellDef>Cena</th>
+          <td mat-cell *matCellDef="let t">{{ t.price | number : "1.2-2" }}</td>
+        </ng-container>
+
+        <!-- Length -->
+        <ng-container matColumnDef="lengthInKm">
+          <th mat-header-cell *matHeaderCellDef>Dužina (km)</th>
+          <td mat-cell *matCellDef="let t">
+            {{ t.lengthInKm | number : "1.2-2" }}
+          </td>
+        </ng-container>
+
+        <!-- Time(walking) -->
+        <ng-container matColumnDef="transportDurations">
+          <th mat-header-cell *matHeaderCellDef>Trajanje(min)</th>
+          <td mat-cell *matCellDef="let t">
+            {{ getTime(t.transportDurations) }}
+          </td>
+        </ng-container>
+
+        <!-- Status -->
+        <ng-container matColumnDef="tourStatus">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let t">
+            {{ getTourStatus(t.status) }}
+          </td>
+        </ng-container>
+
+        <!-- Actions -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let t" class="actions-cell">
+            <button
+              mat-icon-button
+              color="primary"
+              *ngIf="canPublish(t)"
+              (click)="changeStatus(t.id)"
+              aria-label="Objavi turu"
+              matTooltip="Publish"
+            >
+              <mat-icon>publish</mat-icon>
+            </button>
+
+            <button
+              mat-icon-button
+              color="accent"
+              *ngIf="canArchive(t)"
+              (click)="changeStatus(t.id)"
+              aria-label="Arhiviraj turu"
+              matTooltip="Archive"
+            >
+              <mat-icon>archive</mat-icon>
+            </button>
+
+            <button
+              mat-icon-button
+              color="primary"
+              (click)="onEditClicked(t)"
+              aria-label="Izmeni"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+
+            <button
+              mat-icon-button
+              color="accent"
+              (click)="goToCheckpoints(t)"
+              aria-label="Upravljaj Checkpoint-ima"
+              matTooltip="Manage checkpoints"
+            >
+              <mat-icon>flag</mat-icon>
+            </button>
+
+            <button
+              mat-icon-button
+              color="warn"
+              (click)="deleteTour(t.id)"
+              aria-label="Obriši"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <!-- Header / Rows / Empty -->
+        <tr
+          mat-header-row
+          *matHeaderRowDef="displayedColumns; sticky: true"
+        ></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns; trackBy: trackById"
+        ></tr>
+
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell no-data" [attr.colspan]="displayedColumns.length">
+            Nema tura. Klikni “Dodaj” za prvu turu.
+          </td>
+        </tr>
+      </table>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="form">
+    <mat-card-header>
+      <mat-card-title>{{
+        shouldEdit ? "Izmeni turu" : "Nova tura"
+      }}</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <xp-tour-form
+        *ngIf="shouldRenderForm"
+        [shouldEdit]="shouldEdit"
+        [tour]="selectedTour"
+        (tourSaved)="onTourSaved()"
+      ></xp-tour-form>
+
+      <div *ngIf="!shouldRenderForm" class="placeholder">
+        Izaberi “Dodaj” ili klikni ✏️ u tabeli da bi otvorio formu.
+      </div>
+    </mat-card-content>
+  </mat-card>
+</section>
