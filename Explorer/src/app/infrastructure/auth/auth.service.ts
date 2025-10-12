@@ -11,18 +11,39 @@ import { User } from './model/user.model';
 import { Registration } from './model/registration.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
-  user$ = new BehaviorSubject<User>({username: "", id: 0, role: "" });
+  user$ = new BehaviorSubject<User>({ email: '', id: 0, role: '' });
 
-  constructor(private http: HttpClient,
+  constructor(
+    private http: HttpClient,
     private tokenStorage: TokenStorage,
-    private router: Router) { }
+    private router: Router
+  ) {}
 
   login(login: Login): Observable<AuthenticationResponse> {
     return this.http
-      .post<AuthenticationResponse>(environment.apiHost + 'users/login', login)
+      .post<AuthenticationResponse>(
+        environment.gatewayHost + 'api/authentication/authenticate',
+        login
+      )
+      .pipe(
+        tap((authenticationResponse) => {
+          this.tokenStorage.saveAccessToken(authenticationResponse.accessToken);
+          this.setUser();
+          console.log(this.user$);
+          this.router.navigate(['/']);
+        })
+      );
+  }
+
+  register(registration: Registration): Observable<AuthenticationResponse> {
+    return this.http
+      .post<AuthenticationResponse>(
+        environment.gatewayHost + 'api/authentication/register',
+        registration
+      )
       .pipe(
         tap((authenticationResponse) => {
           this.tokenStorage.saveAccessToken(authenticationResponse.accessToken);
@@ -31,23 +52,11 @@ export class AuthService {
       );
   }
 
-  register(registration: Registration): Observable<AuthenticationResponse> {
-    return this.http
-    .post<AuthenticationResponse>(environment.apiHost + 'users', registration)
-    .pipe(
-      tap((authenticationResponse) => {
-        this.tokenStorage.saveAccessToken(authenticationResponse.accessToken);
-        this.setUser();
-      })
-    );
-  }
-
   logout(): void {
-    this.router.navigate(['/home']).then(_ => {
+    this.router.navigate(['/home']).then((_) => {
       this.tokenStorage.clear();
-      this.user$.next({username: "", id: 0, role: "" });
-      }
-    );
+      this.user$.next({ email: '', id: 0, role: '' });
+    });
   }
 
   checkIfUserExists(): void {
@@ -60,13 +69,11 @@ export class AuthService {
 
   private setUser(): void {
     const jwtHelperService = new JwtHelperService();
-    const accessToken = this.tokenStorage.getAccessToken() || "";
+    const accessToken = this.tokenStorage.getAccessToken() || '';
     const user: User = {
-      id: +jwtHelperService.decodeToken(accessToken).id,
-      username: jwtHelperService.decodeToken(accessToken).username,
-      role: jwtHelperService.decodeToken(accessToken)[
-        'http://schemas.microsoft.com/ws/2008/06/identity/claims/role'
-      ],
+      id: +jwtHelperService.decodeToken(accessToken).sub,
+      email: jwtHelperService.decodeToken(accessToken).email,
+      role: jwtHelperService.decodeToken(accessToken).role,
     };
     this.user$.next(user);
   }

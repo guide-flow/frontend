@@ -13,29 +13,29 @@ import { TourMetrics } from './model/tour/tour-metrics';
 export class TourAuthoringService {
   constructor(private http: HttpClient) {}
   getToursByAuthor(): Observable<Tour[]> {
-    return this.http.get<Tour[]>(environment.toursApiHost + 'tours/author');
+    return this.http.get<Tour[]>(environment.gatewayHost + 'api/tours/author');
   }
 
   createTour(tour: CreateUpdateTour): Observable<Tour> {
-    return this.http.post<Tour>(environment.toursApiHost + 'tours', tour);
+    return this.http.post<Tour>(environment.gatewayHost + 'tours', tour);
   }
 
   updateTour(tour: CreateUpdateTour): Observable<void> {
     return this.http.put<void>(
-      `${environment.toursApiHost + 'tours'}/${tour.id}`,
+      `${environment.gatewayHost + 'tours'}/${tour.id}`,
       tour
     );
   }
 
   deleteTour(tourId: number): Observable<void> {
     return this.http.delete<void>(
-      `${environment.toursApiHost + 'tours'}/${tourId}`
+      `${environment.gatewayHost + 'api/tours'}/${tourId}`
     );
   }
 
   updateTourMetrics(tourMetrics: TourMetrics): Observable<Tour> {
     return this.http.put<Tour>(
-      `${environment.toursApiHost + 'tours/tour-metrics'}/${
+      `${environment.gatewayHost + 'api/tours/tour-metrics'}/${
         tourMetrics.tourId
       }`,
       tourMetrics
@@ -44,33 +44,35 @@ export class TourAuthoringService {
 
   updateTourStatus(tourId: number): Observable<Tour> {
     return this.http.put<Tour>(
-      `${environment.toursApiHost + 'tours/tour-status'}/${tourId}`,
+      `${environment.gatewayHost + 'api/tours/tour-status'}/${tourId}`,
       {}
     );
   }
 
   getTourCheckpoints(tourId: number): Observable<Checkpoint[]> {
     return this.http.get<Checkpoint[]>(
-      `${environment.toursApiHost + 'checkpoints/tour-checkpoints'}/${tourId}`
+      `${
+        environment.gatewayHost + 'api/checkpoints/tour-checkpoints'
+      }/${tourId}`
     );
   }
 
   deleteCheckpoint(checkpointId: number): Observable<void> {
     return this.http.delete<void>(
-      `${environment.toursApiHost + 'checkpoints'}/${checkpointId}`
+      `${environment.gatewayHost + 'api/checkpoints'}/${checkpointId}`
     );
   }
 
   createCheckpoint(checkpoint: Checkpoint): Observable<Checkpoint> {
     return this.http.post<Checkpoint>(
-      `${environment.toursApiHost + 'checkpoints'}`,
+      `${environment.gatewayHost + 'api/checkpoints'}`,
       checkpoint
     );
   }
 
   updateCheckpoint(checkpoint: Checkpoint): Observable<Checkpoint> {
     return this.http.put<Checkpoint>(
-      `${environment.toursApiHost + 'checkpoints'}`,
+      `${environment.gatewayHost + 'api/checkpoints'}`,
       checkpoint
     );
   }

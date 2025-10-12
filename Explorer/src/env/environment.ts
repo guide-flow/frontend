@@ -1,5 +1,5 @@
 export const environment = {
   production: false,
-  apiHost: '',
+  gatewayHost: 'http://localhost:5230/',
   toursApiHost: 'https://localhost:7240/api/',
 };
