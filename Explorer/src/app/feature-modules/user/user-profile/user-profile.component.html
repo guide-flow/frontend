@@ -1,0 +1,87 @@
+<div *ngIf="!loading; else loadingTpl">
+  <h2>{{ canEdit ? (hasProfile ? 'Edit Profile' : 'Create Profile') : 'User Profile' }}</h2>
+
+  <div *ngIf="canEdit; else viewMode">
+    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()"> 
+      <div class="mb-3"> <label for="firstName">First Name</label> 
+        <input id="firstName" formControlName="firstName" class="form-control" /> 
+      </div> 
+      <div class="mb-3"> 
+        <label for="lastName">Last Name</label> 
+        <input id="lastName" formControlName="lastName" class="form-control" /> 
+      </div>
+      <div class="mb-3">
+        <label for="biography">Biography</label> 
+        <textarea id="biography" formControlName="biography" class="form-control"></textarea> 
+      </div> 
+      <div class="mb-3"> 
+        <label for="moto">Moto</label> 
+        <input id="moto" formControlName="moto" class="form-control" /> 
+      </div>
+      <div class="mb-3">
+        <label for="profilePicture">Profile Picture</label>
+        <input id="profilePicture" type="file" class="form-control" (change)="onFileSelected($event)" />
+      </div>
+      
+      <img *ngIf="previewUrl" [src]="previewUrl" class="img-thumbnail mb-3" width="150" />
+      <img *ngIf="profileData?.profilePictureUrl" 
+        [src]="'http://localhost:5227' + profileData?.profilePictureUrl"
+        class="img-thumbnail mb-3" width="150" /> 
+      <button class="btn btn-primary" type="submit" [disabled]="profileForm.invalid"> {{ hasProfile ? 'Save Changes' : 'Create Profile' }} </button> 
+    </form>
+  </div>
+
+  <!-- ...existing code... -->
+
+<div *ngIf="user && !canEdit">
+  <button *ngIf="!isFollowing" class="btn btn-success" (click)="onFollow()">Follow</button>
+  <button *ngIf="isFollowing" class="btn btn-danger" (click)="onUnfollow()">Unfollow</button>
+</div>
+<hr />
+<div>
+  <h4>Followers ({{ followers.length }})</h4>
+  <ul>
+    <li *ngFor="let f of followers">
+      {{ f.username }} ": {{ f.id }}"
+    </li>
+  </ul>
+</div>
+
+<div>
+  <h4>Following ({{ following.length }})</h4>
+  <ul>
+    <li *ngFor="let f of following">
+      {{ f.username }} ": {{ f.id }}"
+    </li>
+  </ul>
+</div>
+
+<hr />
+
+<div *ngIf="recommendations.length > 0">
+  <h4>Recommendations</h4>
+  <ul>
+    <li *ngFor="let rec of recommendations">
+      <a [routerLink]="['/user-profile', rec.userDto.id]">{{ rec.userDto.username }} "Broj zajednickih prijatelja ({{ rec.mutualCount }})"</a>
+    </li>
+  </ul>
+</div>
+
+<!-- ...existing code... -->
+
+  <ng-template #viewMode>
+    <div *ngIf="profileData">
+      <img *ngIf="profileData?.profilePictureUrl" 
+        [src]="'http://localhost:5227' + profileData.profilePictureUrl"
+        class="img-thumbnail mb-3" width="150" /> 
+      <p><strong>{{ profileData.firstName }} {{ profileData.lastName }}</strong></p>
+      <p><em>{{ profileData.moto }}</em></p>
+      <p>{{ profileData.biography }}</p>
+    </div>
+    <p *ngIf="!profileData">User has no profile yet.</p>
+  </ng-template>
+</div>
+
+<ng-template #loadingTpl>
+  <p>Loading profile...</p>
+</ng-template>

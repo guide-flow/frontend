@@ -32,6 +32,14 @@
       <button color="primary" mat-raised-button [routerLink]="['tours']">
         Manage tours
       </button>
+      <button
+        *ngIf="user && user.email !== ''"
+        color="primary"
+        mat-raised-button
+        [routerLink]="['/user-profile', user.id]"
+        >
+        My Profile
+      </button>
     </div>
   </div>
 </mat-toolbar>
