@@ -17,12 +17,12 @@ export class TourAuthoringService {
   }
 
   createTour(tour: CreateUpdateTour): Observable<Tour> {
-    return this.http.post<Tour>(environment.gatewayHost + 'tours', tour);
+    return this.http.post<Tour>(environment.gatewayHost + 'api/tours', tour);
   }
 
   updateTour(tour: CreateUpdateTour): Observable<void> {
     return this.http.put<void>(
-      `${environment.gatewayHost + 'tours'}/${tour.id}`,
+      `${environment.gatewayHost + 'api/tours'}/${tour.id}`,
       tour
     );
   }
