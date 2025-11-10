@@ -11,6 +11,14 @@
         Login
       </button>
       <button
+        *ngIf="user && user.email === ''"
+        color="accent"
+        mat-raised-button
+        [routerLink]="['registration']"
+      >
+        Registration
+      </button>
+      <button
         *ngIf="user && user.email !== ''"
         color="accent"
         mat-raised-button
@@ -29,7 +37,12 @@
       >
         Manage equipment
       </button>
-      <button color="primary" mat-raised-button [routerLink]="['tours']">
+      <button
+        *ngIf="user && user.email !== ''"
+        color="primary"
+        mat-raised-button
+        [routerLink]="['tours']"
+      >
         Manage tours
       </button>
       <button

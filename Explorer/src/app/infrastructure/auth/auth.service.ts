@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap, switchMap, catchError, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { TokenStorage } from './jwt/token.service';
@@ -34,7 +34,35 @@ export class AuthService {
           this.tokenStorage.saveAccessToken(authenticationResponse.accessToken);
           this.setUser();
           console.log(this.user$);
-          this.router.navigate(['/']);
+        }),
+        switchMap((authenticationResponse) => {
+          // Check if user has a profile
+          return this.checkUserProfile().pipe(
+            tap((hasProfile) => {
+              const userId = this.user$.value.id;
+              if (!hasProfile && userId) {
+                // First login - redirect to profile creation
+                this.router.navigate(['/user-profile', userId]);
+              } else {
+                // Has profile - redirect to home
+                this.router.navigate(['/']);
+              }
+            }),
+            switchMap(() => of(authenticationResponse))
+          );
+        })
+      );
+  }
+
+  private checkUserProfile(): Observable<boolean> {
+    return this.http
+      .get(environment.gatewayHost + 'api/user-profiles/user-profile')
+      .pipe(
+        switchMap(() => of(true)),
+        catchError((error) => {
+          // If 404 or any error, assume no profile exists
+          console.log('No profile found, first login detected');
+          return of(false);
         })
       );
   }

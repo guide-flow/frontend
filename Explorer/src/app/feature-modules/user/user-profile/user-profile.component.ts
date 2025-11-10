@@ -79,20 +79,27 @@ export class UserProfileComponent implements OnInit {
     if (!this.canEdit || this.profileForm.invalid) return;
 
     const data = {
-    ...this.profileForm.value,
-    imageBase64: this.selectedFileBase64 || null
-  } as UserProfile;
+      ...this.profileForm.value,
+      imageBase64: this.selectedFileBase64 || null,
+      id: this.userId
+    } as UserProfile;
 
     const request$ = this.hasProfile
-      ? this.userService.updateProfile(this.userId, data)
-      : this.userService.createProfile({ ...data, id: this.userId });
+      ? this.userService.updateProfile(data)
+      : this.userService.createProfile(data);
 
     request$.subscribe({
-      next: () => {
-        alert(this.hasProfile ? 'Profile updated' : 'Profile created');
-        if (!this.hasProfile) this.hasProfile = true;
+      next: (response) => {
+        alert(this.hasProfile ? 'Profile updated successfully!' : 'Profile created successfully!');
+        if (!this.hasProfile) {
+          this.hasProfile = true;
+        }
+        this.loadProfile();
       },
-      error: (err) => console.error('Save failed', err)
+      error: (err) => {
+        console.error('Save failed', err);
+        alert('Failed to save profile. Please try again.');
+      }
     });
   }
 
