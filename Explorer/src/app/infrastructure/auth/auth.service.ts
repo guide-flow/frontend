@@ -9,6 +9,7 @@ import { Login } from './model/login.model';
 import { AuthenticationResponse } from './model/authentication-response.model';
 import { User } from './model/user.model';
 import { Registration } from './model/registration.model';
+import { RegistrationResponse } from './model/registration-response.model';
 
 @Injectable({
   providedIn: 'root',
@@ -38,18 +39,11 @@ export class AuthService {
       );
   }
 
-  register(registration: Registration): Observable<AuthenticationResponse> {
-    return this.http
-      .post<AuthenticationResponse>(
-        environment.gatewayHost + 'api/authentication/register',
-        registration
-      )
-      .pipe(
-        tap((authenticationResponse) => {
-          this.tokenStorage.saveAccessToken(authenticationResponse.accessToken);
-          this.setUser();
-        })
-      );
+  register(registration: Registration): Observable<RegistrationResponse> {
+    return this.http.post<RegistrationResponse>(
+      environment.gatewayHost + 'api/authentication/register',
+      registration
+    );
   }
 
   logout(): void {

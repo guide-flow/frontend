@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { Registration } from '../model/registration.model';
+import { FormGroup, FormControl, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import { Registration, Role } from '../model/registration.model';
 import { AuthService } from '../auth.service';
 import { Router } from '@angular/router';
 
@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./registration.component.css']
 })
 export class RegistrationComponent {
+  roles = Object.values(Role);
 
   constructor(
     private authService: AuthService,
@@ -17,27 +18,41 @@ export class RegistrationComponent {
   ) {}
 
   registrationForm = new FormGroup({
-    name: new FormControl('', [Validators.required]),
-    surname: new FormControl('', [Validators.required]),
-    email: new FormControl('', [Validators.required]),
     username: new FormControl('', [Validators.required]),
-    password: new FormControl('', [Validators.required]),
-  });
+    password: new FormControl('', [Validators.required, Validators.minLength(6)]),
+    confirmPassword: new FormControl('', [Validators.required]),
+    role: new FormControl(Role.Tourist, [Validators.required])
+  }, { validators: this.passwordMatchValidator });
+
+  passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
+    const password = control.get('password');
+    const confirmPassword = control.get('confirmPassword');
+
+    if (!password || !confirmPassword) {
+      return null;
+    }
+
+    return password.value === confirmPassword.value ? null : { passwordMismatch: true };
+  }
 
   register(): void {
-    const registration: Registration = {
-      name: this.registrationForm.value.name || "",
-      surname: this.registrationForm.value.surname || "",
-      email: this.registrationForm.value.email || "",
-      username: this.registrationForm.value.username || "",
-      password: this.registrationForm.value.password || "",
-    };
-
     if (this.registrationForm.valid) {
+      const registration: Registration = {
+        username: this.registrationForm.value.username || "",
+        password: this.registrationForm.value.password || "",
+        confirmPassword: this.registrationForm.value.confirmPassword || "",
+        role: this.registrationForm.value.role || Role.Tourist,
+      };
+
       this.authService.register(registration).subscribe({
         next: () => {
-          this.router.navigate(['home']);
+          alert('Registration successful! Please login with your credentials.');
+          this.router.navigate(['login']);
         },
+        error: (err) => {
+          console.error('Registration failed:', err);
+          alert('Registration failed. Please try again.');
+        }
       });
     }
   }

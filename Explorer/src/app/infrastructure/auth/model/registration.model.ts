@@ -1,7 +1,12 @@
+export enum Role {
+  Admin = 'Admin',
+  Author = 'Author',
+  Tourist = 'Tourist'
+}
+
 export interface Registration {
-    name: string,
-    surname: string,
-    email: string,
-    username: string,
-    password: string
+  username: string;
+  password: string;
+  confirmPassword: string;
+  role: Role;
 }
