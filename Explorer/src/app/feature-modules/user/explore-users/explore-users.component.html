@@ -1,0 +1,58 @@
+<div class="explore-container">
+  <div class="header">
+    <h1>Explore Users</h1>
+    <p class="subtitle">Discover and connect with other travelers</p>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="search-section">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Search users</mat-label>
+      <input matInput [(ngModel)]="searchTerm" (input)="onSearch()" placeholder="Search by name or username">
+      <mat-icon matPrefix>search</mat-icon>
+    </mat-form-field>
+  </div>
+
+  <!-- Loading Indicator -->
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading users...</p>
+  </div>
+
+  <!-- No Results -->
+  <div *ngIf="!isLoading && filteredUsers.length === 0" class="no-results">
+    <mat-icon>person_search</mat-icon>
+    <h3>No users found</h3>
+    <p>Try adjusting your search criteria</p>
+  </div>
+
+  <!-- User Grid -->
+  <div *ngIf="!isLoading && filteredUsers.length > 0" class="users-grid">
+    <mat-card *ngFor="let user of filteredUsers" class="user-card">
+      <mat-card-header>
+        <div mat-card-avatar class="user-avatar">
+          <img *ngIf="user.profilePictureUrl" [src]="getImageUrl(user.profilePictureUrl)" class="avatar-img" />
+          <mat-icon *ngIf="!user.profilePictureUrl" class="avatar-icon">account_circle</mat-icon>
+        </div>
+        <mat-card-title>{{ user.firstName }} {{ user.lastName }}</mat-card-title>
+        <mat-card-subtitle>@{{ user.username }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <p *ngIf="user.biography" class="bio">{{ user.biography }}</p>
+        <p *ngIf="!user.biography" class="no-bio">No biography available</p>
+        <p *ngIf="user.moto" class="moto">
+          <mat-icon>format_quote</mat-icon>
+          <em>{{ user.moto }}</em>
+        </p>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-raised-button color="primary" (click)="viewProfile(user.id)">
+          <mat-icon>person</mat-icon>
+          View Profile
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

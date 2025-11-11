@@ -30,7 +30,7 @@ export class LoginComponent {
     if (this.loginForm.valid) {
       this.authService.login(login).subscribe({
         next: () => {
-          this.router.navigate(['/']);
+          // Navigation is handled by AuthService based on profile existence
         },
       });
     }

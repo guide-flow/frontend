@@ -53,6 +53,14 @@
         >
         My Profile
       </button>
+      <button
+        *ngIf="user && user.email !== ''"
+        color="primary"
+        mat-raised-button
+        [routerLink]="['explore-users']"
+        >
+        Explore Users
+      </button>
     </div>
   </div>
 </mat-toolbar>

@@ -28,6 +28,10 @@ export class UserService {
     return this.http.get<UserProfile>(`${this.base}/user-profiles/user-profile`);
   }
 
+  getAllUsers(): Observable<UserProfile[]> {
+    return this.http.get<UserProfile[]>(`${this.base}/user-profiles/all`);
+  }
+
   updateProfile(profileData: UserProfile): Observable<UserProfile> {
     return this.http.put<UserProfile>(`${this.base}/user-profiles/user-profile`, profileData);
   }

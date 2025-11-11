@@ -8,6 +8,7 @@ import { RegistrationComponent } from '../auth/registration/registration.compone
 import { ToursComponent } from 'src/app/feature-modules/tour-authoring/tours/tours.component';
 import { TourDetailsComponent } from 'src/app/feature-modules/tour-authoring/tour-details/tour-details.component';
 import { UserProfileComponent } from 'src/app/feature-modules/user/user-profile/user-profile.component';
+import { ExploreUsersComponent } from 'src/app/feature-modules/user/explore-users/explore-users.component';
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
@@ -21,6 +22,7 @@ const routes: Routes = [
   { path: 'tours', component: ToursComponent },
   { path: 'tour-details/:tourId', component: TourDetailsComponent },
   { path: 'user-profile/:userId', component: UserProfileComponent },
+  { path: 'explore-users', component: ExploreUsersComponent, canActivate: [AuthGuard] },
 ];
 
 @NgModule({
