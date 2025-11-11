@@ -14,7 +14,7 @@ export class ExploreUsersComponent implements OnInit {
   users: UserProfile[] = [];
   filteredUsers: UserProfile[] = [];
   searchTerm: string = '';
-  currentUserId: string = '';
+  currentUsername: string = '';
   isLoading: boolean = false;
 
   constructor(
@@ -24,7 +24,7 @@ export class ExploreUsersComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.currentUserId = this.authService.user$.value?.id?.toString() || '';
+    this.currentUsername = this.authService.user$.value?.email || '';
     this.loadAllUsers();
   }
 
@@ -32,8 +32,8 @@ export class ExploreUsersComponent implements OnInit {
     this.isLoading = true;
     this.userService.getAllUsers().subscribe({
       next: (users) => {
-        // Filter out current user
-        this.users = users.filter(u => u.id !== this.currentUserId);
+        // Filter out current user by username
+        this.users = users.filter(u => u.username !== this.currentUsername);
         this.filteredUsers = [...this.users];
         this.isLoading = false;
       },
