@@ -4,6 +4,7 @@ import { HomeComponent } from 'src/app/feature-modules/layout/home/home.componen
 import { LoginComponent } from '../auth/login/login.component';
 import { EquipmentComponent } from 'src/app/feature-modules/administration/equipment/equipment.component';
 import { AuthGuard } from '../auth/auth.guard';
+import { AuthorGuard } from '../auth/author.guard';
 import { RegistrationComponent } from '../auth/registration/registration.component';
 import { ToursComponent } from 'src/app/feature-modules/tour-authoring/tours/tours.component';
 import { TourDetailsComponent } from 'src/app/feature-modules/tour-authoring/tour-details/tour-details.component';
@@ -19,8 +20,8 @@ const routes: Routes = [
     component: EquipmentComponent,
     canActivate: [AuthGuard],
   },
-  { path: 'tours', component: ToursComponent },
-  { path: 'tour-details/:tourId', component: TourDetailsComponent },
+  { path: 'tours', component: ToursComponent, canActivate: [AuthorGuard] },
+  { path: 'tour-details/:tourId', component: TourDetailsComponent, canActivate: [AuthorGuard] },
   { path: 'user-profile/:userId', component: UserProfileComponent },
   { path: 'explore-users', component: ExploreUsersComponent, canActivate: [AuthGuard] },
 ];

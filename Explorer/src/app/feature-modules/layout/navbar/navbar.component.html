@@ -38,7 +38,7 @@
         Manage equipment
       </button>
       <button
-        *ngIf="user && user.email !== ''"
+        *ngIf="user && user.role === 'Author'"
         color="primary"
         mat-raised-button
         [routerLink]="['tours']"

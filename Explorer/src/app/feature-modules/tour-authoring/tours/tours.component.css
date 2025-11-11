@@ -1,37 +1,161 @@
 .tours {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
   display: grid;
-  grid-template-columns: 1fr; /* jedna kolona = forma ispod tabele */
-  gap: 16px;
+  grid-template-columns: 1fr;
+  gap: 24px;
   align-items: start;
+}
+
+/* List Card */
+.list {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.list mat-card-header {
+  display: flex;
+  align-items: center;
+  padding: 20px 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 4px 4px 0 0;
+  margin: -16px -16px 16px -16px;
+}
+
+.list mat-card-title {
+  font-size: 24px !important;
+  font-weight: 500 !important;
+  margin: 0 !important;
+  color: white !important;
+}
+
+.list mat-card-subtitle {
+  font-size: 14px !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+  margin: 4px 0 0 0 !important;
 }
 
 .list .spacer {
   flex: 1 1 auto;
 }
 
+.list mat-card-header button {
+  background-color: white !important;
+  color: #667eea !important;
+  font-weight: 500;
+}
+
+/* Table Styling */
+table {
+  width: 100%;
+  background: white;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.mat-header-cell {
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  color: #333 !important;
+  background-color: #f5f5f5 !important;
+}
+
+.mat-cell {
+  font-size: 14px;
+  padding: 16px 8px !important;
+}
+
+.mat-row:hover {
+  background-color: #f9f9f9;
+  transition: background-color 0.2s;
+}
+
 .cell-strong {
   font-weight: 600;
+  color: #333;
+  font-size: 15px;
 }
 
 .cell-wrap {
   white-space: normal;
   word-break: break-word;
+  max-width: 300px;
+  line-height: 1.5;
+  color: #666;
 }
 
 .actions-cell {
   display: flex;
-  gap: 6px;
+  gap: 4px;
   justify-content: flex-end;
+  align-items: center;
+}
+
+.actions-cell button {
+  width: 36px;
+  height: 36px;
 }
 
 .no-data {
   text-align: center;
-  color: rgba(0, 0, 0, 0.54);
+  color: #999;
+  padding: 48px 16px !important;
+  font-style: italic;
+}
+
+/* Form Card */
+.form {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.form mat-card-header {
+  padding: 20px 24px;
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  border-radius: 4px 4px 0 0;
+  margin: -16px -16px 16px -16px;
+}
+
+.form mat-card-title {
+  font-size: 20px !important;
+  font-weight: 500 !important;
+  margin: 0 !important;
+  color: white !important;
 }
 
 .form .placeholder {
-  padding: 8px 0;
-  opacity: 0.8;
+  padding: 32px 16px;
+  text-align: center;
+  color: #999;
+  font-style: italic;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  border: 2px dashed #ddd;
 }
 
-/* više ti ne treba @media, jer je layout već jednokolonski */
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .tours {
+    padding: 16px;
+  }
+
+  table {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 768px) {
+  .list mat-card-header {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .list mat-card-header button {
+    width: 100%;
+  }
+
+  .cell-wrap {
+    max-width: 200px;
+  }
+}

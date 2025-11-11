@@ -1,35 +1,167 @@
 .form-vert {
   display: flex;
   flex-direction: column;
-  gap: 12px; /* razmak između elemenata */
+  gap: 20px;
   width: 100%;
+  padding: 16px 24px;
 }
 
+/* Form Fields */
 mat-form-field {
-  width: 100%; /* Material polja preko cele širine */
+  width: 100%;
+  font-size: 14px;
+}
+
+/* Map Section */
+.map-section {
+  margin: 8px 0;
+}
+
+.map-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 12px;
+  display: block;
 }
 
 .map-block {
   display: block;
   width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 8px;
 }
 
-/* ako tvoj xp-map već ima fiksnu visinu unutra (.map-frame), ovo je dovoljno.
-   Ako treba spolja da forsiraš visinu, dodaj custom CSS varijantu u xp-map ili: */
 .map-block ::ng-deep .map-frame {
-  height: 320px; /* visina prikaza mape */
+  height: 400px;
 }
 
-/* fajl upload i preview */
-.file-block .preview {
+.map-help {
+  font-size: 12px;
+  color: #999;
+  font-style: italic;
   margin-top: 8px;
 }
-.file-block .preview img {
-  max-width: 180px;
-  border: 1px solid #ddd;
+
+/* File Upload Section */
+.file-block {
+  margin: 8px 0;
 }
 
-/* dugme dole */
+.file-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.file-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.file-input-wrapper:hover {
+  border-color: #f093fb;
+  background-color: #fff;
+}
+
+.file-input-wrapper input[type="file"] {
+  display: none;
+}
+
+.file-button {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.file-button:hover {
+  transform: translateY(-2px);
+}
+
+.file-name {
+  font-size: 14px;
+  color: #666;
+  flex: 1;
+}
+
+.file-block .preview {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.file-block .preview img {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.preview-label {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* Coordinates Section */
+.coordinates-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* Actions */
 .actions {
-  margin-top: 12px;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.actions button {
+  min-width: 140px;
+  font-weight: 500;
+  padding: 8px 24px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .form-vert {
+    padding: 12px 16px;
+    gap: 16px;
+  }
+
+  .coordinates-group {
+    grid-template-columns: 1fr;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .actions button {
+    width: 100%;
+  }
+
+  .map-block ::ng-deep .map-frame {
+    height: 300px;
+  }
 }
