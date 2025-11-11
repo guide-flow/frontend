@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./registration.component.css']
 })
 export class RegistrationComponent {
-  roles = Object.values(Role);
+  roles = Object.values(Role).filter(role => role !== Role.Admin);
 
   constructor(
     private authService: AuthService,

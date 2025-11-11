@@ -65,7 +65,7 @@ export class ExploreUsersComponent implements OnInit {
   getImageUrl(profilePictureUrl?: string): string {
     if (!profilePictureUrl) return '';
     if (profilePictureUrl.startsWith('/images/')) {
-      return `api/user-profiles${profilePictureUrl}`;
+      return `api/api/user-profiles${profilePictureUrl}`;
     }
     return profilePictureUrl;
   }
