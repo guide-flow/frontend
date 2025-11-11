@@ -169,4 +169,12 @@ export class UserProfileComponent implements OnInit {
 
     reader.readAsDataURL(file);
   }
+
+  getImageUrl(profilePictureUrl: string): string {
+    // Convert /images/users/file.jpg to api/user-profiles/images/users/file.jpg
+    if (profilePictureUrl.startsWith('/images/')) {
+      return `api/user-profiles${profilePictureUrl}`;
+    }
+    return profilePictureUrl;
+  }
 }

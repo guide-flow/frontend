@@ -14,7 +14,7 @@
             <div class="picture-preview">
               <img *ngIf="previewUrl" [src]="previewUrl" class="profile-img" />
               <img *ngIf="!previewUrl && profileData && profileData.profilePictureUrl"
-                   [src]="'http://localhost:5227' + profileData.profilePictureUrl"
+                   [src]="getImageUrl(profileData.profilePictureUrl)"
                    class="profile-img" />
               <div *ngIf="!previewUrl && (!profileData || !profileData.profilePictureUrl)" class="no-image">
                 <mat-icon>account_circle</mat-icon>
@@ -83,7 +83,7 @@
         <div class="profile-view">
           <div class="profile-avatar">
             <img *ngIf="profileData && profileData.profilePictureUrl"
-                 [src]="'http://localhost:5227' + profileData.profilePictureUrl"
+                 [src]="getImageUrl(profileData.profilePictureUrl)"
                  class="profile-img-large" />
             <div *ngIf="!profileData || !profileData.profilePictureUrl" class="no-image-large">
               <mat-icon>account_circle</mat-icon>
