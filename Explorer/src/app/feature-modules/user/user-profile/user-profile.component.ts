@@ -173,7 +173,7 @@ export class UserProfileComponent implements OnInit {
   getImageUrl(profilePictureUrl: string): string {
     // Convert /images/users/file.jpg to api/user-profiles/images/users/file.jpg
     if (profilePictureUrl.startsWith('/images/')) {
-      return `api/user-profiles${profilePictureUrl}`;
+      return `api/api/user-profiles${profilePictureUrl}`;
     }
     return profilePictureUrl;
   }
