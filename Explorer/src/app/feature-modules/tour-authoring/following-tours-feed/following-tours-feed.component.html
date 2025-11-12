@@ -1,0 +1,120 @@
+<div class="following-feed-container">
+  <mat-card class="header-card">
+    <mat-card-header>
+      <mat-card-title>Tours from Authors You Follow</mat-card-title>
+      <mat-card-subtitle>Discover tours from your favorite authors</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Search tours</mat-label>
+        <input
+          matInput
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="onSearchChange()"
+          placeholder="Search by title or description..."
+        />
+        <mat-icon matPrefix>search</mat-icon>
+        <button
+          mat-icon-button
+          matSuffix
+          *ngIf="searchTerm"
+          (click)="searchTerm = ''; onSearchChange()"
+          aria-label="Clear"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Loading tours...</p>
+  </div>
+
+  <!-- Error State -->
+  <mat-card *ngIf="!isLoading && errorMessage" class="error-card">
+    <mat-card-content>
+      <mat-icon color="warn">error</mat-icon>
+      <p>{{ errorMessage }}</p>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Empty State - Not Following Anyone -->
+  <mat-card *ngIf="!isLoading && !errorMessage && tours.length === 0" class="empty-state-card">
+    <mat-card-content>
+      <mat-icon>person_add</mat-icon>
+      <h3>You're not following any authors yet</h3>
+      <p>Start following tour authors to see their tours here!</p>
+      <button mat-raised-button color="primary" routerLink="/explore-users">
+        Discover Authors
+      </button>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- No Search Results -->
+  <mat-card *ngIf="!isLoading && !errorMessage && tours.length > 0 && filteredTours.length === 0" class="empty-state-card">
+    <mat-card-content>
+      <mat-icon>search_off</mat-icon>
+      <h3>No tours found</h3>
+      <p>No tours match your search term "{{ searchTerm }}"</p>
+      <button mat-raised-button (click)="searchTerm = ''; onSearchChange()">
+        Clear Search
+      </button>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Tours Grid -->
+  <div *ngIf="!isLoading && !errorMessage && filteredTours.length > 0" class="tours-grid">
+    <mat-card *ngFor="let tour of filteredTours" class="tour-card">
+      <mat-card-header>
+        <mat-card-title>{{ tour.title }}</mat-card-title>
+        <mat-card-subtitle>
+          <mat-chip-set>
+            <mat-chip [class]="'difficulty-' + tour.difficulty">
+              {{ getDifficultyLabel(tour.difficulty) }}
+            </mat-chip>
+          </mat-chip-set>
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <p class="tour-description">{{ tour.description }}</p>
+
+        <div class="tour-details">
+          <div class="detail-item">
+            <mat-icon>straighten</mat-icon>
+            <span>{{ tour.lengthInKm | number: '1.2-2' }} km</span>
+          </div>
+
+          <div class="detail-item">
+            <mat-icon>attach_money</mat-icon>
+            <span>{{ tour.price | number: '1.2-2' }}</span>
+          </div>
+
+          <div class="detail-item" *ngIf="tour.checkpoints && tour.checkpoints.length > 0">
+            <mat-icon>flag</mat-icon>
+            <span>{{ tour.checkpoints.length }} checkpoints</span>
+          </div>
+        </div>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-raised-button color="primary" (click)="viewTourDetails(tour)">
+          <mat-icon>visibility</mat-icon>
+          View Details
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <!-- Results Summary -->
+  <div *ngIf="!isLoading && !errorMessage && filteredTours.length > 0" class="results-summary">
+    <p>
+      Showing {{ filteredTours.length }} of {{ tours.length }} tours
+      <span *ngIf="searchTerm"> matching "{{ searchTerm }}"</span>
+    </p>
+  </div>
+</div>

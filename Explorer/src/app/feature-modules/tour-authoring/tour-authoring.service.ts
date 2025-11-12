@@ -12,6 +12,13 @@ import { TourMetrics } from './model/tour/tour-metrics';
 })
 export class TourAuthoringService {
   constructor(private http: HttpClient) {}
+
+  getToursByAuthors(authorIds: string[]): Observable<Tour[]> {
+    return this.http.post<Tour[]>(
+      environment.gatewayHost + 'api/tours/by-authors',
+      authorIds
+    );
+  }
   getToursByAuthor(): Observable<Tour[]> {
     return this.http.get<Tour[]>(environment.gatewayHost + 'api/tours/author');
   }

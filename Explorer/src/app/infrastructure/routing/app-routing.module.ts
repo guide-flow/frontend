@@ -8,6 +8,7 @@ import { AuthorGuard } from '../auth/author.guard';
 import { RegistrationComponent } from '../auth/registration/registration.component';
 import { ToursComponent } from 'src/app/feature-modules/tour-authoring/tours/tours.component';
 import { TourDetailsComponent } from 'src/app/feature-modules/tour-authoring/tour-details/tour-details.component';
+import { FollowingToursFeedComponent } from 'src/app/feature-modules/tour-authoring/following-tours-feed/following-tours-feed.component';
 import { UserProfileComponent } from 'src/app/feature-modules/user/user-profile/user-profile.component';
 import { ExploreUsersComponent } from 'src/app/feature-modules/user/explore-users/explore-users.component';
 
@@ -22,6 +23,7 @@ const routes: Routes = [
   },
   { path: 'tours', component: ToursComponent, canActivate: [AuthorGuard] },
   { path: 'tour-details/:tourId', component: TourDetailsComponent, canActivate: [AuthorGuard] },
+  { path: 'following-feed', component: FollowingToursFeedComponent, canActivate: [AuthGuard] },
   { path: 'user-profile/:userId', component: UserProfileComponent },
   { path: 'explore-users', component: ExploreUsersComponent, canActivate: [AuthGuard] },
 ];

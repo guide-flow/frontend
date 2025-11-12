@@ -61,6 +61,14 @@
         >
         Explore Users
       </button>
+      <button
+        *ngIf="user && user.email !== ''"
+        color="primary"
+        mat-raised-button
+        [routerLink]="['following-feed']"
+        >
+        Following Feed
+      </button>
     </div>
   </div>
 </mat-toolbar>
