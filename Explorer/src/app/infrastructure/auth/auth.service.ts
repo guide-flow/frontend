@@ -74,6 +74,10 @@ export class AuthService {
     );
   }
 
+  getAllUsers(): Observable<User[]> {
+    return this.http.get<User[]>(environment.gatewayHost + 'api/users');
+  }
+
   logout(): void {
     this.router.navigate(['/home']).then((_) => {
       this.tokenStorage.clear();

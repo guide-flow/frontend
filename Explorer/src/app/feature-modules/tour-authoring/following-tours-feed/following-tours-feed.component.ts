@@ -42,8 +42,12 @@ export class FollowingToursFeedComponent implements OnInit {
       return;
     }
 
-    this.userService.getFollowing(currentUserId).subscribe({
-      next: (following) => {
+    // Get both following list and all users with roles
+    forkJoin({
+      following: this.userService.getFollowing(currentUserId),
+      allUsers: this.authService.getAllUsers()
+    }).subscribe({
+      next: ({ following, allUsers }) => {
         if (following.length === 0) {
           this.tours = [];
           this.filteredTours = [];
@@ -51,7 +55,21 @@ export class FollowingToursFeedComponent implements OnInit {
           return;
         }
 
-        const authorIds = following.map(f => f.id);
+        // Filter to only get authors from the following list
+        const followingIds = following.map(f => f.id);
+        const authorUsers = allUsers.filter(user =>
+          followingIds.includes(user.id.toString()) &&
+          user.role === 'Author'
+        );
+
+        if (authorUsers.length === 0) {
+          this.tours = [];
+          this.filteredTours = [];
+          this.isLoading = false;
+          return;
+        }
+
+        const authorIds = authorUsers.map(author => author.id.toString());
 
         this.tourService.getToursByAuthors(authorIds).subscribe({
           next: (tours) => {
@@ -67,8 +85,8 @@ export class FollowingToursFeedComponent implements OnInit {
         });
       },
       error: (err) => {
-        console.error('Error loading following list:', err);
-        this.errorMessage = 'Failed to load your following list. Please try again later.';
+        console.error('Error loading data:', err);
+        this.errorMessage = 'Failed to load data. Please try again later.';
         this.isLoading = false;
       },
     });

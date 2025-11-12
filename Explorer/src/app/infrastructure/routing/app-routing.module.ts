@@ -22,7 +22,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
   },
   { path: 'tours', component: ToursComponent, canActivate: [AuthorGuard] },
-  { path: 'tour-details/:tourId', component: TourDetailsComponent, canActivate: [AuthorGuard] },
+  { path: 'tour-details/:tourId', component: TourDetailsComponent, canActivate: [AuthGuard] },
   { path: 'following-feed', component: FollowingToursFeedComponent, canActivate: [AuthGuard] },
   { path: 'user-profile/:userId', component: UserProfileComponent },
   { path: 'explore-users', component: ExploreUsersComponent, canActivate: [AuthGuard] },

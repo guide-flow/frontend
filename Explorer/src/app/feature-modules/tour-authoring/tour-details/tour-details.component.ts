@@ -4,6 +4,7 @@ import { TourAuthoringService } from '../tour-authoring.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TourMetrics } from '../model/tour/tour-metrics';
 import { TransportType } from '../model/tour/transport-type';
+import { AuthService } from 'src/app/infrastructure/auth/auth.service';
 
 @Component({
   selector: 'xp-tour-details',
@@ -17,6 +18,7 @@ export class TourDetailsComponent {
   shouldRenderCheckpointForm: boolean = false;
   shouldEdit: boolean = false;
   tourMetrics: TourMetrics;
+  isAuthor: boolean = false;
   mapCheckpoints: {
     latitude: number;
     longitude: number;
@@ -37,12 +39,24 @@ export class TourDetailsComponent {
   constructor(
     private service: TourAuthoringService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('tourId');
     this.tourId = Number(id);
+
+    // Check if the user is an author
+    this.isAuthor = this.authService.user$.value.role === 'Author';
+
+    // Set displayedColumns based on user role
+    if (this.isAuthor) {
+      this.displayedColumns = ['title', 'description', 'longitude', 'latitude', 'actions'];
+    } else {
+      this.displayedColumns = ['title', 'description', 'longitude', 'latitude'];
+    }
+
     this.getCheckpoints();
   }
 
